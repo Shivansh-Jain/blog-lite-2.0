@@ -1,0 +1,152 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: white;margin-bottom: 10px;">
+    <div class="container-fluid">
+        <RouterLink to="/profile">
+        <a class="navbar-brand">
+            <div>
+                <img :src="require(`@/assets/profile/${user_id}.jpg`)" style="border-radius: 50%;" width="40"
+                    height="40" class="d-inline-block align-top" alt="">
+                <p>{{ username }}</p>
+            </div>
+        </a>
+    </RouterLink>
+        <button class="navbar-toggler" style="color: white;" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <br>
+        <div class="collapse navbar-collapse me-auto mb-2 mb-lg-0" id="navbarNav">
+            <ul class="navbar-nav" style="width:100%">
+                <li class="nav-item">
+                    <form class="container-fluid">
+                        <div class="input-group">
+                            <input type="text" v-model="entry" class="form-control" placeholder="Username"
+                                aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="input-group-text" @click="search" id="basic-addon1" data-bs-toggle="modal"
+                                data-bs-target="#search"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                </svg></span>
+                            <!-- Modal -->
+                            <div class="modal fade" id="search" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Search Results</h1>
+                                            <button type="button" @click="reload" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="container">
+                                                <div v-for="acc in accounts" v-bind:key="acc.user_id">
+                                                    <div class="row">
+                                                        <div class="col-sm-1">
+                                                            <img :src="require(`@/assets/profile/${acc.user_id}.jpg`)"
+                                                                style="border-radius: 50%;" width="40" height="40"
+                                                                class="d-inline-block align-top" alt="">
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <RouterLink :to="'/other/'+acc.user_id">
+                                                            <p>{{ acc.name }}</p></RouterLink>
+                                                        </div>
+                                                        <div class="col-sm-7">
+                                                            <div v-if="following.includes(acc.user_id)">
+                                                            <button type="button" class="btn btn-light" @click="unfollow(acc.user_id)" style="float: right;">Unfollow</button>
+                                                            </div>
+                                                            <div v-else>
+                                                            <button type="button" class="btn btn-primary" @click="follow(acc.user_id)" style="float: right;">Follow</button>
+                                                            </div>
+
+                                                    </div>
+                                                    </div><br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <!-- <div v-if="cpost"> -->
+                    <button type="button" style="border: 0;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="30" fill="currentColor"
+                            class="bi bi-plus-square-dotted" style="margin-top:0.2cm" viewBox="0 0 16 16">
+                            <path
+                                d="M2.5 0c-.166 0-.33.016-.487.048l.194.98A1.51 1.51 0 0 1 2.5 1h.458V0H2.5zm2.292 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zm1.833 0h-.916v1h.916V0zm1.834 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zM13.5 0h-.458v1h.458c.1 0 .199.01.293.029l.194-.981A2.51 2.51 0 0 0 13.5 0zm2.079 1.11a2.511 2.511 0 0 0-.69-.689l-.556.831c.164.11.305.251.415.415l.83-.556zM1.11.421a2.511 2.511 0 0 0-.689.69l.831.556c.11-.164.251-.305.415-.415L1.11.422zM16 2.5c0-.166-.016-.33-.048-.487l-.98.194c.018.094.028.192.028.293v.458h1V2.5zM.048 2.013A2.51 2.51 0 0 0 0 2.5v.458h1V2.5c0-.1.01-.199.029-.293l-.981-.194zM0 3.875v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 5.708v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 7.542v.916h1v-.916H0zm15 .916h1v-.916h-1v.916zM0 9.375v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .916v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .917v.458c0 .166.016.33.048.487l.98-.194A1.51 1.51 0 0 1 1 13.5v-.458H0zm16 .458v-.458h-1v.458c0 .1-.01.199-.029.293l.981.194c.032-.158.048-.32.048-.487zM.421 14.89c.183.272.417.506.69.689l.556-.831a1.51 1.51 0 0 1-.415-.415l-.83.556zm14.469.689c.272-.183.506-.417.689-.69l-.831-.556c-.11.164-.251.305-.415.415l.556.83zm-12.877.373c.158.032.32.048.487.048h.458v-1H2.5c-.1 0-.199-.01-.293-.029l-.194.981zM13.5 16c.166 0 .33-.016.487-.048l-.194-.98A1.51 1.51 0 0 1 13.5 15h-.458v1h.458zm-9.625 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zm1.834-1v1h.916v-1h-.916zm1.833 1h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                        </svg>
+                    </button>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <form @submit.prevent="create" style="max-width: 50%;padding-top: 5%;" class="m-auto"
+                                    enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <!-- <img class="mb-4" src="/docs/5.2/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
+                                        <h1 class="h3 mb-3 fw-normal" style="color: white;">Create Post</h1>
+
+                                        <div class="form-floating pt-1">
+                                            <div class="form-control pt-0 pb-5">
+                                                <p style="margin-bottom: 0.2cm;">Select an Image</p>
+                                                <input @change="handle_image" ref="pimage" name="pimage" type="file"
+                                                    accept="image/jpeg,image/png">
+                                            </div>
+                                        </div>
+                                        <div class="form-floating">
+                                            <input class="form-control" v-model="title" name="title" placeholder="Title"
+                                                required>
+                                            <label for="floatingtitle">Title</label>
+                                        </div>
+                                        <div class="form-floating">
+                                            <input v-model="caption" class="form-control" name="caption"
+                                                placeholder="write your caption here">
+                                            <label for="floatingcaption">Caption</label>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="w-100 btn btn-lg btn-primary" type="submit">Post</button>
+
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- </div> -->
+                </li>
+                <li class="nav-item">
+                    <RouterLink to="/newsfeed">
+                    <a class="nav-link" href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="30" style="margin-top: 0.185cm;"
+                            fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
+                            <path
+                                d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146ZM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5Z" />
+                        </svg>
+                    </a></RouterLink>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" @click="logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z" />
+                            <path fill-rule="evenodd"
+                                d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z" />
+                        </svg>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
